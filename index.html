@@ -8,161 +8,138 @@
     <style>
         :root {
             color-scheme: dark;
-            font-family: "Segoe UI", Tahoma, sans-serif;
+            font-family: "Share Tech Mono", "Fira Code", monospace;
+            --bg: #04070d;
+            --text: #e4f1ff;
+            --user: #00eaff;
+            --assistant: #ff9b40;
+            --input-border: #29c8ff;
         }
 
         body {
             margin: 0;
             min-height: 100vh;
-            background: radial-gradient(circle at 20% 20%, #444654, #202123 60%);
-            color: #e3e3ec;
+            background: var(--bg);
+            color: var(--text);
             display: flex;
-            align-items: stretch;
             justify-content: center;
+            align-items: flex-start;
+            padding: 48px 32px;
+            box-sizing: border-box;
         }
 
         .app-shell {
             flex: 1 1 auto;
-            max-width: 840px;
+            max-width: 960px;
+            width: 100%;
             display: flex;
             flex-direction: column;
-            padding: 24px;
+            gap: 24px;
             box-sizing: border-box;
-            gap: 16px;
         }
 
         .app-header {
             display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
+            flex-direction: column;
+            gap: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-size: 0.9rem;
+            color: rgba(228, 241, 255, 0.6);
         }
 
         .app-header h1 {
-            font-size: 1.25rem;
             margin: 0;
+            font-size: 1.1rem;
             font-weight: 600;
-        }
-
-        .app-header span {
-            font-size: 0.85rem;
-            color: #acacbe;
+            color: var(--text);
         }
 
         .chat-window {
             flex: 1 1 auto;
+            min-height: 60vh;
             overflow-y: auto;
-            background: rgba(32, 33, 35, 0.75);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: 18px;
-            padding: 16px;
             display: flex;
             flex-direction: column;
             gap: 12px;
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.02);
+            font-size: 0.98rem;
+            line-height: 1.6;
         }
 
         .message-row {
             display: flex;
-            gap: 12px;
+            gap: 16px;
             align-items: flex-start;
         }
 
-        .message-row.user {
-            flex-direction: row-reverse;
+        .prompt {
+            flex: 0 0 auto;
+            margin-right: 12px;
+            letter-spacing: 0.08em;
+            white-space: pre;
         }
 
-        .avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #10a37f, #2b6cb0);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-            font-weight: 600;
-            flex-shrink: 0;
-        }
-
-        .message-row.user .avatar {
-            background: linear-gradient(135deg, #5a5df0, #9333ea);
-        }
-
-        .bubble {
-            max-width: min(78%, 560px);
-            padding: 12px 16px;
-            border-radius: 16px;
-            line-height: 1.5;
-            font-size: 0.95rem;
-            background: rgba(48, 49, 55, 0.9);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            word-break: break-word;
+        .message-text {
             white-space: pre-wrap;
+            word-break: break-word;
         }
 
-        .message-row.user .bubble {
-            background: rgba(16, 163, 127, 0.16);
-            border-color: rgba(16, 163, 127, 0.4);
+        .message-row.user .prompt,
+        .message-row.user .message-text {
+            color: var(--user);
+            text-shadow: 0 0 12px rgba(0, 234, 255, 0.7);
         }
 
-        .bubble ul {
-            padding-left: 20px;
-            margin: 6px 0 0;
-        }
-
-        .bubble li {
-            margin-bottom: 4px;
+        .message-row.assistant .prompt,
+        .message-row.assistant .message-text {
+            color: var(--assistant);
+            text-shadow: 0 0 12px rgba(255, 155, 64, 0.65);
         }
 
         .input-bar {
             display: flex;
-            gap: 10px;
-            align-items: flex-end;
+            gap: 12px;
+            align-items: center;
+            padding: 16px 20px;
+            border: 1px solid var(--input-border);
+            border-radius: 10px;
+            background: rgba(6, 17, 30, 0.6);
+            box-shadow: 0 0 26px rgba(41, 200, 255, 0.4);
         }
 
         .input-bar textarea {
             flex: 1 1 auto;
             resize: none;
-            min-height: 60px;
+            min-height: 52px;
             max-height: 160px;
-            padding: 14px 16px;
-            border-radius: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            background: rgba(32, 33, 35, 0.85);
-            color: #f7fafc;
+            border: none;
+            background: transparent;
+            color: var(--text);
             font-size: 1rem;
-            line-height: 1.4;
-            box-sizing: border-box;
+            line-height: 1.5;
             outline: none;
         }
 
         .input-bar textarea::placeholder {
-            color: #8b8ba0;
+            color: rgba(228, 241, 255, 0.4);
         }
 
         .input-bar button {
             border: none;
-            padding: 14px 20px;
-            border-radius: 14px;
-            background: linear-gradient(135deg, #10a37f, #2b6cb0);
-            color: white;
-            font-size: 0.95rem;
+            padding: 0;
+            background: none;
+            color: var(--input-border);
             font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
             cursor: pointer;
-            box-shadow: 0 8px 14px rgba(16, 163, 127, 0.3);
-            transition: transform 0.1s ease, box-shadow 0.1s ease, filter 0.1s ease;
+            text-shadow: 0 0 12px rgba(41, 200, 255, 0.6);
         }
 
         .input-bar button:disabled {
-            filter: saturate(0.35);
+            opacity: 0.35;
             cursor: not-allowed;
-            box-shadow: none;
-        }
-
-        .input-bar button:not(:disabled):active {
-            transform: translateY(1px);
-            box-shadow: 0 4px 8px rgba(16, 163, 127, 0.35);
+            text-shadow: none;
         }
     </style>
 </head>
@@ -170,8 +147,7 @@
 <body>
     <div class="app-shell">
         <header class="app-header">
-            <h1>MichaelGPT</h1>
-            <span>Here to help with whatever you need</span>
+            <h1>MichaelGPT Terminal</h1>
         </header>
         <main class="chat-window" id="chat-window"></main>
         <form class="input-bar" id="input-form">

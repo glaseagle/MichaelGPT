@@ -25,6 +25,7 @@ function init() {
     appendAssistantIntro();
     inputForm.addEventListener("submit", handleSubmit);
     inputField.addEventListener("input", autoResizeInput);
+    inputField.addEventListener("keydown", handleInputKeydown);
     autoResizeInput.call(inputField);
     inputField.focus();
 }
@@ -36,6 +37,19 @@ function appendAssistantIntro() {
 function autoResizeInput() {
     this.style.height = "auto";
     this.style.height = Math.min(this.scrollHeight, 160) + "px";
+}
+
+function handleInputKeydown(event) {
+    if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault();
+        if (typeof inputForm.requestSubmit === "function") {
+            inputForm.requestSubmit();
+        } else {
+            inputForm.dispatchEvent(
+                new Event("submit", { bubbles: true, cancelable: true })
+            );
+        }
+    }
 }
 
 async function handleSubmit(event) {
@@ -52,14 +66,14 @@ async function handleSubmit(event) {
     inputField.focus();
     toggleInputDisabled(true);
 
-    const assistantBubble = appendMessage("assistant", "Thinking...");
+    const assistantLine = appendMessage("assistant", "Thinking...");
 
     try {
         const response = await requestCreativeTangent(userText);
-        renderAssistantReply(assistantBubble, response);
+        renderAssistantReply(assistantLine, response);
     } catch (error) {
         console.error("Proxy request failed:", error);
-        assistantBubble.textContent = formatErrorMessage(error);
+        assistantLine.textContent = formatErrorMessage(error);
     } finally {
         toggleInputDisabled(false);
         scrollChatToBottom();
@@ -70,23 +84,23 @@ function appendMessage(role, text) {
     const messageRow = document.createElement("div");
     messageRow.classList.add("message-row", role);
 
-    const avatar = document.createElement("div");
-    avatar.className = "avatar";
-    avatar.textContent = role === "user" ? "U" : "AI";
+    const prompt = document.createElement("span");
+    prompt.className = "prompt";
+    prompt.textContent = role === "user" ? "USER> " : "MICHAELGPT> ";
 
-    const bubble = document.createElement("div");
-    bubble.className = "bubble";
-    bubble.textContent = text;
+    const messageText = document.createElement("span");
+    messageText.className = "message-text";
+    messageText.textContent = text;
 
-    messageRow.appendChild(avatar);
-    messageRow.appendChild(bubble);
+    messageRow.appendChild(prompt);
+    messageRow.appendChild(messageText);
     chatWindow.appendChild(messageRow);
     scrollChatToBottom();
-    return bubble;
+    return messageText;
 }
 
-function renderAssistantReply(bubble, message) {
-    bubble.textContent = message;
+function renderAssistantReply(line, message) {
+    line.textContent = message;
 }
 
 async function requestCreativeTangent(userMessage) {
